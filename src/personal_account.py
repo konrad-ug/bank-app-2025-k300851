@@ -14,7 +14,6 @@ class PersonalAccount(Account):
             national_id = "Invalid"
         self.national_id = national_id
 
-        
         if promo_code is not None and re.match(r"^PROM_...$", promo_code) and national_id_year and national_id_year > 1960:
             self.balance += 50
 
