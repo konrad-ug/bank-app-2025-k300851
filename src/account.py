@@ -1,18 +1,27 @@
-import re
-from src.national_id_utils import get_year_from_national_id
+
+
 
 
 class Account:
-    def __init__(self, first_name, last_name, national_id, promo_code=None):
-        self.first_name = first_name
-        self.last_name = last_name
+    def __init__(self, trasnfer_fee):
         self.balance = 0
+        self.trasnfer_fee = trasnfer_fee
 
-        national_id_year = get_year_from_national_id(national_id)
-        if national_id_year is None:
-            national_id = "Invalid"
-        self.national_id = national_id
+    def transfer(self, amount, transfer_type):
+        if amount < 0:
+            return False
 
-        
-        if promo_code is not None and re.match(r"^PROM_...$", promo_code) and national_id_year and national_id_year > 1960:
-            self.balance += 50
+        match transfer_type:
+            case "incoming":
+                self.balance += amount
+                return True
+            case "outgoing":
+                if amount <= self.balance:
+                    self.balance -= amount
+                    return True
+
+        return False
+    
+    def express_transfer(self, amount, ):
+        if self.transfer(amount, "outgoing"):
+            self.balance += self.trasnfer_fee
