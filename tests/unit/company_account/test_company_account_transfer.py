@@ -1,38 +1,18 @@
 from src.comapny_account import ComapnyAccount
+from tests.unit.fixtures import company_account
+import pytest
 
 
 class TestCompanyAccountTransfer:
-    def test_transfer_outgoing_valid(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        result = account.transfer(100, "outgoing")
-        assert account.balance == 0
-        assert result == True
-
-    def test_transfer_incoming_valid(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        result = account.transfer(5, "incoming")
-        assert account.balance == 105
-        assert result == True
-
-    def test_transfer_outgoing_negative_amount(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        result = account.transfer(-1, "outgoing")
-        assert account.balance == 100
-        assert result == False
-
-    def test_transfer_incoming_negative_amount(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        result = account.transfer(-1, "incoming")
-        assert account.balance == 100
-        assert result == False
-
-    def test_transfer_outgoing_insufficient_balance(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        result = account.transfer(1, "outgoing")
-        assert account.balance == 0
-        assert result == False
-    
+    @pytest.mark.parametrize("balance, amount, type, balance_after, result", [
+        (100, 100, "outgoing", 0, True), #outgoing_valid
+        (100, 5, "incoming", 105, True), #incoming_valid
+        (100, -1, "outgoing", 100, False), #outgoing_negative_amount
+        (100, -1, "incoming", 100, False), #incoming_negative_amount
+        (0, 1, "outgoing", 0, False) #outgoing_insufficient_balance
+    ])
+    def test_transfer(self, company_account, balance, amount, type, balance_after, result):
+        company_account.balance = balance 
+        result = company_account.transfer(amount, type)
+        assert company_account.balance == balance_after
+        assert result == result

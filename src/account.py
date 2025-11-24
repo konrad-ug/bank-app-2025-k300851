@@ -25,6 +25,6 @@ class Account:
         self.balance += amount
         self.history.append(amount)
     
-    def express_transfer(self, amount, ):
+    def express_transfer(self, amount):
         if self.transfer(amount, "outgoing"):
             self.change_balance(self.trasnfer_fee)
