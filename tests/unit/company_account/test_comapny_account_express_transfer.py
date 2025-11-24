@@ -1,26 +1,16 @@
 from src.comapny_account import ComapnyAccount
+from tests.unit.fixtures import company_account
+import pytest
 
 
 class TestCompanyAccountExpressTransfer:
-    def test_transfer_valid(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        account.express_transfer(95)
-        assert account.balance == 0
-
-    def test_transfer_valid_with_debt(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        account.express_transfer(100)
-        assert account.balance == -5
-
-    def test_transfer_negative_amount(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.balance = 100 
-        account.express_transfer(-1)
-        assert account.balance == 100
-
-    def test_transfer_insufficient_balance(self):
-        account = ComapnyAccount("Kemar", "587458965")
-        account.express_transfer(1)
-        assert account.balance == 0
+    @pytest.mark.parametrize("balance, amount, balance_after", [
+        (100, 95, 0), #valid
+        (100, 100, -5), #valid with debt
+        (100, -1, 100), #invalid negative amount
+        (0, 1, 0) #invalid insufficient balance
+    ])
+    def test_transfer(self, company_account, balance, amount, balance_after):
+        company_account.balance = balance 
+        company_account.express_transfer(amount)
+        assert company_account.balance == balance_after

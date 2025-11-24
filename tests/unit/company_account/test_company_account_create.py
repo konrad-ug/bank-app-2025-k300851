@@ -1,4 +1,5 @@
 from src.comapny_account import ComapnyAccount
+import pytest
 
 
 class TestComapnyAccount:
@@ -7,11 +8,8 @@ class TestComapnyAccount:
         assert account.name == "Kemar"
         assert account.nip == "5874589874"
 
-    def test_account_create_invalid_nip(self):
-        account = ComapnyAccount("Kemar", "587458987")
+    @pytest.mark.parametrize("nip", ["587458987", "58745898748"])
+    def test_account_create_invalid_nip(self, nip):
+        account = ComapnyAccount("Kemar", nip)
         assert account.nip == "Invalid"
-    
-        account = ComapnyAccount("Kemar", "58745898748")
-        assert account.nip == "Invalid"
-
     

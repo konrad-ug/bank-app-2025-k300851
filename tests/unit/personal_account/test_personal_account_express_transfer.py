@@ -1,28 +1,16 @@
-
-
 from src.personal_account import PersonalAccount
+from tests.unit.fixtures import personal_account
+import pytest
 
 
-class TestCompanyAccountExpressTransfer:
-    def test_transfer_valid(self):
-        account = PersonalAccount("John", "Doe", "87060979383")
-        account.balance = 100 
-        account.express_transfer(99)
-        assert account.balance == 0
-
-    def test_transfer_valid_with_debt(self):
-        account = PersonalAccount("John", "Doe", "87060979383")
-        account.balance = 100 
-        account.express_transfer(100)
-        assert account.balance == -1
-
-    def test_transfer_negative_amount(self):
-        account = PersonalAccount("John", "Doe", "87060979383")
-        account.balance = 100 
-        account.express_transfer(-1)
-        assert account.balance == 100
-
-    def test_transfer_insufficient_balance(self):
-        account = PersonalAccount("John", "Doe", "87060979383")
-        account.express_transfer(1)
-        assert account.balance == 0
+class TestPersonalAccountExpressTransfer:
+    @pytest.mark.parametrize("balance, amount, balance_after", [
+        (100, 99, 0), #valid
+        (100, 100, -1), #valid with debt
+        (100, -1, 100), #invalid negative amount
+        (0, 1, 0) #invalid insufficient balance
+    ])
+    def test_transfer(self, personal_account, balance, amount, balance_after):
+        personal_account.balance = balance 
+        personal_account.express_transfer(amount)
+        assert personal_account.balance == balance_after
