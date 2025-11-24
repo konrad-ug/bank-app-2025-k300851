@@ -8,3 +8,10 @@ class ComapnyAccount(Account):
         if len(nip) != 10:
             nip = "Invalid"
         self.nip = nip
+ 
+    def take_loan(self, amount):
+        if amount <= 0 or -1775 not in self.history or 2 * amount > self.balance:
+            return False
+        self.balance += amount
+        return True
+

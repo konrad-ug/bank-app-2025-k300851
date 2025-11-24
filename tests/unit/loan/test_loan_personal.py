@@ -3,7 +3,7 @@ from tests.unit.fixtures import personal_account
 import pytest
 
 
-class TestLoan:
+class TestLoanPersonal:
     def test_loan_submit_success_last_3_incoming(self, personal_account):
         personal_account.transfer(100, "incoming")
         personal_account.transfer(150, "incoming")
