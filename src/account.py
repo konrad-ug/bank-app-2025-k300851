@@ -28,3 +28,5 @@ class Account:
     def express_transfer(self, amount):
         if self.transfer(amount, "outgoing"):
             self.change_balance(self.trasnfer_fee)
+            return True
+        return False
