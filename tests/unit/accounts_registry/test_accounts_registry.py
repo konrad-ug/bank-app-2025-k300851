@@ -48,3 +48,29 @@ class TestAccountsRegistry:
 
     def test_count_account_empty_registry(self, accounts_registry_empty):
         assert accounts_registry_empty.count() == 0
+
+    def test_update_account(self, accounts_registry_filled):
+        data = {
+            "name": "Jan",
+            "surname": "Kowalski",
+            "pesel": "03222467185"
+        }
+        assert accounts_registry_filled.update("88102073355", data) == True
+
+    def test_update_account_not_exists(self, accounts_registry_filled):
+        data = {
+            "name": "Jan",
+            "surname": "Kowalski",
+            "pesel": "03222467185"
+        }
+        assert accounts_registry_filled.update("62031557434", data) == False
+
+    def test_delete_account(self, accounts_registry_filled):
+        accounts_len = len(accounts_registry_filled.accounts)
+        assert accounts_registry_filled.delete("88102073355") == True
+        assert len(accounts_registry_filled.accounts) == accounts_len - 1
+
+    def test_delete_account_not_exists(self, accounts_registry_filled):
+        accounts_len = len(accounts_registry_filled.accounts)
+        assert accounts_registry_filled.delete("75062655448") == False
+        assert len(accounts_registry_filled.accounts) == accounts_len
