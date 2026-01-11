@@ -11,7 +11,9 @@ def create_account():
     data = request.get_json() 
     print(f"Create account request: {data}") 
     account = PersonalAccount(data["name"], data["surname"], data["pesel"]) 
-    registry.add_account(account) 
+    result = registry.add_account(account) 
+    if not result:
+       return jsonify({"message": f"Account with pesel {data['pesel']} is already exist"}), 409
     return jsonify({"message": "Account created"}), 201 
  
 @app.route("/api/accounts", methods=['GET']) 
@@ -55,3 +57,23 @@ def delete_account(pesel):
    if not result:
       return jsonify({"message": "Account not found"}), 404 
    return jsonify({"message": "Account deleted"}), 200
+
+@app.route("/api/accounts/<pesel>/transfer", methods=["POST"])
+def transfer(pesel):
+   data = request.get_json() 
+   try:
+      registry.transfer(pesel, data["amount"], data["type"])
+      return jsonify({"message": "Zlecenie przyjęto do realizacji"}), 200
+   except Exception as e:
+      message = str(e)
+      response_json = jsonify({"message": message})
+      match message:
+         case "Account not exists":
+            return response_json,404
+         case "Type is invalid":
+            return response_json,422
+         case "Transaction error":
+            return response_json,422
+         case _:
+            return response_json,500
+

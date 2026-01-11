@@ -4,13 +4,13 @@ import pytest
 
 class TestAccountsRegistry:
     def test_add_account_valid(self, accounts_registry_empty, personal_account):
-        accounts_registry_empty.add_account(personal_account)
+        assert accounts_registry_empty.add_account(personal_account) == True
         assert len(accounts_registry_empty.accounts) == 1
         assert accounts_registry_empty.accounts[0].national_id == personal_account.national_id
 
     def test_add_accounts_with_the_same_national_id(self, accounts_registry_empty, personal_account):
-        accounts_registry_empty.add_account(personal_account)
-        accounts_registry_empty.add_account(personal_account)
+        assert accounts_registry_empty.add_account(personal_account) == True
+        assert accounts_registry_empty.add_account(personal_account) == False
         assert len(accounts_registry_empty.accounts) == 1
         assert accounts_registry_empty.accounts[0].national_id == personal_account.national_id
 
@@ -74,3 +74,19 @@ class TestAccountsRegistry:
         accounts_len = len(accounts_registry_filled.accounts)
         assert accounts_registry_filled.delete("75062655448") == False
         assert len(accounts_registry_filled.accounts) == accounts_len
+
+    def test_account_transfer_invalid_account(self, accounts_registry_empty):
+        with pytest.raises(Exception) as exception_info:
+            accounts_registry_empty.transfer("75062655448", 1, "incoming")
+        assert str(exception_info.value) == "Account not exists"
+
+    def test_account_transfer_invalid_type(self, accounts_registry_filled):
+        with pytest.raises(Exception) as exception_info:
+            accounts_registry_filled.transfer("88102073355", 1, "incomin")
+        assert str(exception_info.value) == "Type is invalid"
+
+    @pytest.mark.parametrize("type", ["express", "outgoing", "incoming"])
+    def test_account_transfer_transaction_error(self, accounts_registry_filled, type):
+        with pytest.raises(Exception) as exception_info:
+            accounts_registry_filled.transfer("88102073355", -1, type)
+        assert str(exception_info.value) == "Transaction error"

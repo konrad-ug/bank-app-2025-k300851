@@ -5,8 +5,11 @@ class AccountsRegistry:
         self.accounts: list[PersonalAccount] = []
 
     def add_account(self, account: PersonalAccount):
-        if isinstance(account, PersonalAccount) and self.get_by_national_id(account.national_id) is None:
-            self.accounts.append(account)
+        if not isinstance(account, PersonalAccount) or self.get_by_national_id(account.national_id) is not None:
+            return False
+        
+        self.accounts.append(account)
+        return True
     
     def get_by_national_id(self, national_id: str) -> PersonalAccount | None:
         for account in self.accounts:
@@ -37,4 +40,26 @@ class AccountsRegistry:
         if "pesel" in params:
             acc.national_id = params["pesel"]
         return True
+    
+    def transfer(self, national_id: str, amount: int, type: str):
+        acc = self.get_by_national_id(national_id)
+        if not acc:
+            raise Exception("Account not exists")
+        if type not in ["incoming", "outgoing", "express"]:
+            raise Exception("Type is invalid")
+
+        result = None
+        match type:
+            case "incoming":
+                result = acc.transfer(amount, type)
+            case "express":
+                result = acc.express_transfer(amount)
+            case "outgoing":
+                result = acc.transfer(amount, type)
+        if not result:
+            raise Exception("Transaction error")
+        
+
+
+        
     
