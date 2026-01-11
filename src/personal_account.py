@@ -1,6 +1,8 @@
 import re
 from src.national_id_utils import get_year_from_national_id
 from src.account import Account
+from smtp.smtp import SMTPClient
+from datetime import datetime
 
 
 class PersonalAccount(Account):
@@ -32,3 +34,9 @@ class PersonalAccount(Account):
                 return True
             
         return False
+    
+    def send_history_via_email(self, email_address):
+        client = SMTPClient()
+        return client.send(subject="Account Transfer History " + datetime.now().strftime("%Y-%m-%d"),
+                    text=f"Personal account history: {self.history}",
+                    email_address=email_address)

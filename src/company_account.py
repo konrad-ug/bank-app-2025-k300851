@@ -2,6 +2,7 @@ from src.account import Account
 import requests
 from datetime import datetime
 import os
+from smtp.smtp import SMTPClient
 
 VAT_API_URL = os.getenv("BANK_APP_MF_URL", "https://wl-test.mf.gov.pl/api/search/nip").strip()
 
@@ -31,4 +32,9 @@ class CompanyAccount(Account): # pragma: no cover
             print(nip, "status vat:", status_vat)
             return status_vat == "Czynny"
         return False
-        
+    
+    def send_history_via_email(self, email_address):
+        client = SMTPClient()
+        return client.send(subject="Account Transfer History " + datetime.now().strftime("%Y-%m-%d"),
+                    text=f"Company account history: {self.history}",
+                    email_address=email_address)
