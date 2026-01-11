@@ -1,4 +1,4 @@
-from src.comapny_account import ComapnyAccount
+from src.company_account import CompanyAccount
 from tests.unit.fixtures import company_account
 
 
@@ -13,7 +13,6 @@ class TestComapnyAccountHistory:
         assert company_account.history == [-25, -35, -40, 5]
 
     def test_history_express_transfer(self, company_account):
-        company_account = ComapnyAccount("Kemar", "587458965")
         company_account.balance = 100 
         company_account.express_transfer(50)
         company_account.express_transfer(45)

@@ -1,4 +1,4 @@
-from src.comapny_account import ComapnyAccount
+from src.company_account import CompanyAccount
 from tests.unit.fixtures import company_account
 import pytest
 

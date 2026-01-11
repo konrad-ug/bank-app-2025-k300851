@@ -1,5 +1,5 @@
 from src.personal_account import PersonalAccount
-from src.comapny_account import ComapnyAccount
+from src.company_account import CompanyAccount
 from src.accounts_registry import AccountsRegistry
 import pytest
 
@@ -9,9 +9,21 @@ def personal_account():
     return PersonalAccount("John", "Doe", "87060979383")
 
 
+@pytest.fixture(autouse=True)
+def mock_requests(mocker):
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"result": {"subject": {"statusVat": "Czynny"}}}
+    mocker.patch("src.company_account.requests.get", return_value=mock_response)
+
+
 @pytest.fixture
-def company_account():
-    return ComapnyAccount("Kemar", "587458965")
+def company_account(mocker):
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"result": {"subject": {"statusVat": "Czynny"}}}
+    mocker.patch("src.company_account.requests.get", return_value=mock_response)
+    return CompanyAccount("Kemar", "5874589874")
 
 
 @pytest.fixture
