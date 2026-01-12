@@ -1,5 +1,5 @@
 import pytest
-from app.api_test.account_utils import send_request, API_URL, send_transfer_request
+from tests.api.account_utils import send_request, API_URL, send_transfer_request
 
 
 @pytest.fixture
