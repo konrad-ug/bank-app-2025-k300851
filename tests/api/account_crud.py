@@ -1,6 +1,6 @@
 import pytest
-from app.api_test.account_utils import send_request, send_transfer_request
-from app.api_test.fixtures import API_URL, api_account, api_account_with_balance
+from tests.api.account_utils import send_request, send_transfer_request
+from tests.api.fixtures import API_URL, api_account, api_account_with_balance
 
 
 
