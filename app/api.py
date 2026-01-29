@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify 
 from src.accounts_registry import AccountsRegistry 
+from src.repositories.mongo_accounts_repository import MongoAccountsRepository
 from src.personal_account import PersonalAccount 
 
 app = Flask(__name__) 
 
-registry = AccountsRegistry() 
+mongo = MongoAccountsRepository(url="mongodb://localhost:27017/")
+registry = AccountsRegistry(mongo) 
 
 @app.route("/api/accounts", methods=['POST']) 
 def create_account(): 
@@ -37,7 +39,7 @@ def get_account_by_pesel(pesel):
    acc = registry.get_by_national_id(pesel)
    if not acc:
       return jsonify({"message": "Account not found"}), 404
-   
+   print("balance", acc.balance)
    return jsonify({"name": acc.first_name, 
                    "surname": acc.last_name, 
                    "pesel": acc.national_id, 
@@ -77,3 +79,14 @@ def transfer(pesel):
          case _:
             return response_json,500
 
+
+@app.route("/api/accounts/load", methods=['POST']) 
+def load_all(): 
+   registry.load()
+   return jsonify({"message": "loaded"}) 
+
+
+@app.route("/api/accounts/save", methods=['POST']) 
+def save_all(): 
+   registry.save()
+   return jsonify({"message": "saved"}) 

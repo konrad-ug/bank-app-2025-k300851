@@ -40,3 +40,11 @@ class PersonalAccount(Account):
         return client.send(subject="Account Transfer History " + datetime.now().strftime("%Y-%m-%d"),
                     text=f"Personal account history: {self.history}",
                     email_address=email_address)
+
+    def to_dict(self):
+        return {
+            "history": self.history,
+            "balance": self.balance,
+            "first_name": self.first_name,
+            "last_name": self.last_name
+        }

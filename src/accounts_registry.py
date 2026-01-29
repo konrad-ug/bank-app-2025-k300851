@@ -1,8 +1,16 @@
 from src.personal_account import PersonalAccount
+from src.repositories.accounts_repository import AccountsRepository
 
 class AccountsRegistry:
-    def __init__(self):
+    def __init__(self, database: AccountsRepository):
         self.accounts: list[PersonalAccount] = []
+        self.database = database
+
+    def load(self):
+        self.accounts = self.database.load_all()
+
+    def save(self):
+        self.database.save_all(self.accounts)
 
     def add_account(self, account: PersonalAccount):
         if not isinstance(account, PersonalAccount) or self.get_by_national_id(account.national_id) is not None:
