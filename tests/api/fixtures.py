@@ -23,3 +23,13 @@ def api_account_with_balance():
     send_request(API_URL , "POST", data)
     send_transfer_request(data["pesel"], 10000, "incoming")
     return data
+
+
+@pytest.fixture()
+def api_clear_registry():
+        response = send_request(API_URL, "GET", {})
+        accounts = response.json()
+
+        for account in accounts:
+            pesel = account["pesel"]
+            send_request(f"{API_URL}/{pesel}", "DELETE", {})

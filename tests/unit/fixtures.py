@@ -1,6 +1,7 @@
 from src.personal_account import PersonalAccount
 from src.company_account import CompanyAccount
 from src.accounts_registry import AccountsRegistry
+from src.repositories.mongo_accounts_repository import MongoAccountsRepository
 import pytest
 
 
@@ -27,16 +28,40 @@ def company_account(mocker):
 
 
 @pytest.fixture
-def accounts_registry_empty():
-    return AccountsRegistry()
+def accounts_registry_empty(mocker):
+    mock_collection = mocker.Mock()
+    mock_collection.find.return_value = []
+
+    mock_mongo = mocker.MagicMock()
+    mock_mongo.__getitem__.return_value = {"accounts": mock_collection}
+    mocker.patch(
+        "src.repositories.mongo_accounts_repository.pymongo.MongoClient",
+        return_value=mock_mongo,
+    )
+
+    mongo = MongoAccountsRepository()
+    return AccountsRegistry(mongo)
 
 
 @pytest.fixture
-def accounts_registry_filled():
-    registry = AccountsRegistry()
-    registry.accounts = [
+def accounts_registry_filled(mocker):
+    accounts = [
         PersonalAccount("John", "Doe", "87060979383"),
         PersonalAccount("Adam", "Smith", "88102073355"),
-        PersonalAccount("Alan", "Adams", "01271638886")
+        PersonalAccount("Alan", "Adams", "01271638886"),
     ]
+    mock_collection = mocker.Mock()
+    mock_collection.find.return_value = [{**acc.to_dict(), "national_id": acc.national_id} for acc in accounts]
+
+    mock_mongo = mocker.MagicMock()
+    mock_mongo.__getitem__.return_value = {"accounts": mock_collection}
+    mocker.patch(
+        "src.repositories.mongo_accounts_repository.pymongo.MongoClient",
+        return_value=mock_mongo,
+    )
+
+    mongo = MongoAccountsRepository()
+    registry = AccountsRegistry(mongo)
+    registry.accounts = accounts
+
     return registry

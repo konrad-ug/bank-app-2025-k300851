@@ -90,3 +90,21 @@ class TestAccountsRegistry:
         with pytest.raises(Exception) as exception_info:
             accounts_registry_filled.transfer("88102073355", -1, type)
         assert str(exception_info.value) == "Transaction error"
+
+    def test_accounts_load_from_database(self, accounts_registry_filled, mocker):
+        spy = mocker.spy(accounts_registry_filled.database.accounts, "find")
+
+        accounts_registry_filled.load()
+
+        assert spy.called
+        assert spy.call_count == 1
+        assert len(accounts_registry_filled.accounts) == 3
+    
+    def test_account_save_to_database(self, accounts_registry_empty, personal_account, mocker):
+        assert accounts_registry_empty.add_account(personal_account) == True
+        spy = mocker.spy(accounts_registry_empty.database.accounts, "update_one")
+
+        accounts_registry_empty.save()
+
+        assert spy.called
+        assert spy.call_count == 1

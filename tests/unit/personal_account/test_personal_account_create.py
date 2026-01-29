@@ -30,3 +30,11 @@ class TestPersonalAccount:
         national_id = "60112574589"
         account = PersonalAccount("John", "Doe", national_id, promo_code="PROM_ABC") 
         assert account.balance == 0
+
+    def test_account_creation_convert_to_json(self):
+        account = PersonalAccount("John", "Doe", "87060979383")
+        json = account.to_dict()
+        assert json["first_name"] == "John"
+        assert json["last_name"] == "Doe"
+        assert json["balance"] == 0
+        assert json["history"] == []
