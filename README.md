@@ -2,13 +2,19 @@
 # Bank-app
 
 ## Author:
-name:
+name: Kamil
 
-surname:
+surname: Żak
 
-group:
+group: 3
 
 ## How to start the app
-
+```
+pip install -r requirements.txt
+python -m flask --app app/api.py --debug run
+```
 
 ## How to execute tests
+```
+python -m pytest .
+```
